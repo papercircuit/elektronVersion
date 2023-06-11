@@ -1,0 +1,20 @@
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+  }
+  
+  h1 {
+    font-size: 24px;
+    margin-top: 50px;
+  }
+  
+  #listings-container {
+    margin-top: 20px;
+  }
+  
+  @font-face {
+    font-family: 'Press Start 2P', cursive;
+    src: url();
+  }

@@ -1,0 +1,19 @@
+{
+    "name": "reverb_price_history",
+    "version": "1.0.0",
+    "description": "Electron app for fetching and processing listings",
+    "main": "index.js",
+    "scripts": {
+        "start": "electron ."
+    },
+    "author": "kj",
+    "license": "MIT",
+    "dependencies": {
+        "axios": "latest",
+        "electron": "^25.1.0",
+        "sqlite3": "^5.0.2"
+    },
+    "devDependencies": {
+        "electron-packager": "latest"
+    }
+}
