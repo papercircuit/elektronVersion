@@ -6,11 +6,12 @@ const sqlite3 = require('sqlite3').verbose();
 
 let mainWindow;
 let db;
+let fetchInterval;
 
 async function fetchListings() {
   try {
     const response = await axios.get(
-      'https://api.reverb.com/api/listings/all?per_page=10000&sort=listing_id'
+      'https://api.reverb.com/api/listings/all?per_page=10000&sort=created_at'
     );
 
     const { listings } = response.data;
@@ -93,13 +94,34 @@ async function fetchListings() {
       }
     }
 
-    const message = `Listings successfully fetched and processed. Matched listings: ${matchedListings}`;
+    const message = `Listings successfully fetched and processed. Matched listings: ${matchedListings} at ${new Date().toLocaleString()}`;
+    
     mainWindow.webContents.send('message', message);
-    console.log(message);
+    return listings; // Return the listings data
   } catch (error) {
     console.error('Failed to fetch and process listings:', error);
     throw error; // Rethrow the error to handle it further if needed
   }
+}
+
+function startApp(interval) {
+  fetchListings()
+    .then((listings) => {
+      mainWindow.webContents.send('listings', listings); // Send the listings data to the renderer process
+    })
+    .catch((error) => {
+      console.error('Failed to fetch and process listings:', error);
+    });
+
+  fetchInterval = setInterval(() => {
+    fetchListings()
+      .then((listings) => {
+        mainWindow.webContents.send('listings', listings); // Send the listings data to the renderer process
+      })
+      .catch((error) => {
+        console.error('Failed to fetch and process listings:', error);
+      });
+  }, interval);
 }
 
 function createWindow() {
@@ -107,7 +129,8 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: false,
+      nodeIntegration: true,
+      contextIsolation: true,
       preload: path.join(__dirname, 'preload.js') // Path to the preload script
     },
   });
@@ -121,6 +144,7 @@ function createWindow() {
   );
 
   mainWindow.on('closed', function () {
+    clearInterval(fetchInterval);
     mainWindow = null;
   });
 
@@ -160,8 +184,23 @@ function createWindow() {
       link_photo TEXT
     )`);
 
-    fetchListings();
-    setInterval(fetchListings, 3600000); // Fetch every hour
+    fetchListings()
+      .then((listings) => {
+        mainWindow.webContents.send('listings', listings); // Send the initial listings data to the renderer process
+      })
+      .catch((error) => {
+        console.error('Failed to fetch and process listings:', error);
+      });
+
+    setInterval(() => {
+      fetchListings()
+        .then((listings) => {
+          mainWindow.webContents.send('listings', listings); // Send the updated listings data to the renderer process
+        })
+        .catch((error) => {
+          console.error('Failed to fetch and process listings:', error);
+        });
+    }, 3600000); // Fetch every hour
   });
 }
 
@@ -179,12 +218,6 @@ app.on('activate', function () {
   }
 });
 
-ipcMain.on('fetchListings', (event) => {
-  fetchListings()
-    .then(() => {
-      // Listings fetched successfully
-    })
-    .catch((error) => {
-      console.error('Failed to fetch listings:', error);
-    });
+ipcMain.once('start-app', (event, interval) => {
+  startApp(interval);
 });

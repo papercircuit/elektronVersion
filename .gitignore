@@ -3,3 +3,5 @@ listings.db
 package-lock.json
 .DS_Store
 .vscode
+dist
+dist-app

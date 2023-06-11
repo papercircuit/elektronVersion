@@ -1,5 +1,5 @@
 body {
-    background-color: #000;
+    background-color: #00000085;
     color: #fff;
     font-family: 'Press Start 2P', cursive;
     text-align: center;
@@ -13,6 +13,13 @@ body {
   #listings-container {
     margin-top: 20px;
   }
+
+  canvas#price-chart {
+    max-width: 800px;
+    max-height: 400px;
+    margin-top: 20px;
+  }
+  
   
   @font-face {
     font-family: 'Press Start 2P', cursive;

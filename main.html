@@ -1,16 +1,35 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Listings App</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-  </head>
-  <body>
-    <h1>Listings App</h1>
-    <div id="message-container"><p id="message"></p></div>
-    <div id="listings-container"></div>
-    <script src="preload.js" preload></script>
-    <script src="index.js"></script>
-    <script src="renderer.js"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'">
+  <title>Listings App</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment"></script>
+
+</head>
+
+<body>
+  <h1>Listings App</h1>
+  <label for="interval-select">Interval:</label>
+  <select id="interval-select">
+    <option value="3600000">1 hour</option>
+    <option value="7200000">2 hours</option>
+    <option value="10800000">3 hours</option>
+  </select>
+  <div id="chart-container">
+    <canvas id="price-chart"></canvas>
+  </div>
+  <div id="message-container"></div>
+  <div id="listings-container"></div>
+
+  <script src="index.js"></script>
+  <script src="preload.js"></script>
+  <script src="renderer.js"></script>
+  <script src="chart.js"></script>
+  
+</body>
+
 </html>

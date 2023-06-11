@@ -10,10 +10,10 @@
     "license": "MIT",
     "dependencies": {
         "axios": "latest",
-        "electron": "^25.1.0",
+        "chart.js": "^4.3.0",
+        "electron": "^13.1.7",
+        "electron-packager": "latest",
+        "moment": "^2.29.4",
         "sqlite3": "^5.0.2"
-    },
-    "devDependencies": {
-        "electron-packager": "latest"
     }
 }
