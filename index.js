@@ -182,7 +182,7 @@ function createWindow() {
       link_photo TEXT
     )`);
 
-    const interval = 3600000; // Fetch every hour
+    const interval = 5000; // Fetch every hour
     startApp(interval);
 
     setInterval(() => {
