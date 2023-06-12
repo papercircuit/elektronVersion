@@ -25,7 +25,13 @@ ipcRenderer.on('listings', (event, listings) => {
 // Function to render the chart
 function renderChart(labels, data) {
   const ctx = document.getElementById('price-chart').getContext('2d');
-  const chart = new Chart(ctx, {
+
+  // Clear the existing chart if it exists
+  if (window.chart) {
+    window.chart.destroy();
+  }
+
+  window.chart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: labels,
@@ -50,6 +56,7 @@ function renderChart(labels, data) {
     }
   });
 }
+
 
 // Function to render the listings
 function renderListings(listings) {

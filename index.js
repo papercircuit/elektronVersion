@@ -8,10 +8,9 @@ let mainWindow;
 let db;
 let fetchInterval;
 
-// Function to render the listings
-function renderListings(listings) {
-  const listingsContainer = mainWindow.webContents;
-  listingsContainer.send('listings', listings);
+// Function to render the chart
+function renderChart(labels, data) {
+  mainWindow.webContents.executeJavaScript(`renderChart(${JSON.stringify(labels)}, ${JSON.stringify(data)})`);
 }
 
 // Function to render the listings
@@ -106,12 +105,14 @@ async function startApp(interval) {
     console.log('Rendering listings...');
     mainWindow.webContents.send('listings', listings); // Send the initial listings data to the renderer process
     renderListings(listings); // Render the initial listings on the page
+    renderChart(listings.map(listing => new Date(listing.created_at).toLocaleString()), listings.map(listing => listing.price.amount));
 
     fetchInterval = setInterval(async () => {
       try {
         const listings = await fetchListings();
         mainWindow.webContents.send('listings', listings); // Send the updated listings data to the renderer process
         renderListings(listings); // Render the updated listings on the page
+        renderChart(listings.map(listing => new Date(listing.created_at).toLocaleString()), listings.map(listing => listing.price.amount));
       } catch (error) {
         console.error('Failed to fetch and process listings:', error);
       }

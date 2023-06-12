@@ -9,9 +9,15 @@ body {
     font-size: 24px;
     margin-top: 50px;
   }
-  
-  li {
 
+  td {
+    font-size: 10px;
+    text-align: left;
+  }
+
+  th {
+    text-align: left;
+    text-decoration: underline;
   }
   
   #listings-container {
