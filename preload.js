@@ -1,5 +1,7 @@
 const { ipcRenderer } = require('electron');
 
+window.ipcRenderer = ipcRenderer;
+
 window.addEventListener('DOMContentLoaded', () => {
   const messageContainer = document.getElementById('message-container');
   ipcRenderer.on('message', (event, message) => {

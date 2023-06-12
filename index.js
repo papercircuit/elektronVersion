@@ -8,7 +8,22 @@ let mainWindow;
 let db;
 let fetchInterval;
 
+// Function to render the listings
+function renderListings(listings) {
+  const listingsContainer = mainWindow.webContents;
+  listingsContainer.send('listings', listings);
+}
+
+// Function to render the listings
+function renderListings(listings) {
+  const listingItems = listings.map(listing => listing.title);
+  mainWindow.webContents.executeJavaScript(`renderListings(${JSON.stringify(listingItems)})`);
+}
+
 async function fetchListings() {
+  console.log('Fetching listings...');
+  mainWindow.webContents.send('message', 'Fetching listings...');
+
   try {
     const response = await axios.get(
       'https://api.reverb.com/api/listings/all?per_page=10000&sort=created_at'
@@ -18,85 +33,57 @@ async function fetchListings() {
 
     let matchedListings = 0;
 
+    console.log('Processing listings...');
+
     for (const listing of listings) {
-      const {
-        id,
-        make,
-        model,
-        finish,
-        year,
-        title,
-        created_at,
-        shop_name,
-        description,
-        condition,
-        condition_uuid,
-        condition_slug,
-        price,
-        inventory,
-        has_inventory,
-        offers_enabled,
-        auction,
-        category_uuids,
-        listing_currency,
-        published_at,
-        buyer_price,
-        state,
-        shipping,
-        slug,
-        photos,
-        _links
-      } = listing;
+      // Insert the listing into the SQLite database
+      db.run(
+        `INSERT INTO listings (
+          id, make, model, finish, year, title, created_at, shop_name,
+          description, condition, condition_uuid, condition_slug, price,
+          inventory, has_inventory, offers_enabled, auction, category_uuids,
+          listing_currency, published_at, buyer_price, state, shipping, slug,
+          photos, link_photo
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT (id) DO NOTHING`,
+        [
+          listing.id,
+          listing.make,
+          listing.model,
+          listing.finish,
+          listing.year,
+          listing.title,
+          listing.created_at,
+          listing.shop_name,
+          listing.description,
+          listing.condition,
+          listing.condition_uuid,
+          listing.condition_slug,
+          listing.price.amount,
+          listing.inventory,
+          listing.has_inventory,
+          listing.offers_enabled,
+          listing.auction,
+          listing.category_uuids,
+          listing.listing_currency,
+          listing.published_at,
+          listing.buyer_price.amount,
+          listing.state.slug,
+          JSON.stringify(listing.shipping),
+          listing.slug,
+          JSON.stringify(listing.photos),
+          listing._links.photo.href
+        ]
+      );
 
-      if (listing.listing_currency === 'USD') {
-        // Insert the listing into the SQLite database
-        db.run(
-          `INSERT INTO listings (
-            id, make, model, finish, year, title, created_at, shop_name,
-            description, condition, condition_uuid, condition_slug, price,
-            inventory, has_inventory, offers_enabled, auction, category_uuids,
-            listing_currency, published_at, buyer_price, state, shipping, slug,
-            photos, link_photo
-          )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-          ON CONFLICT (id) DO NOTHING`,
-          [
-            id,
-            make,
-            model,
-            finish,
-            year,
-            title,
-            created_at,
-            shop_name,
-            description,
-            condition,
-            condition_uuid,
-            condition_slug,
-            price.amount,
-            inventory,
-            has_inventory,
-            offers_enabled,
-            auction,
-            category_uuids,
-            listing_currency,
-            published_at,
-            buyer_price.amount,
-            state.slug,
-            JSON.stringify(shipping),
-            slug,
-            JSON.stringify(photos),
-            _links.photo.href
-          ]
-        );
-
-        matchedListings++;
-      }
+      matchedListings++;
     }
 
     const message = `Listings successfully fetched and processed. Matched listings: ${matchedListings} at ${new Date().toLocaleString()}`;
-    
+    console.log(message);
     mainWindow.webContents.send('message', message);
+    renderListings(listings); // Render the listings on the page
     return listings; // Return the listings data
   } catch (error) {
     console.error('Failed to fetch and process listings:', error);
@@ -104,24 +91,26 @@ async function fetchListings() {
   }
 }
 
-function startApp(interval) {
-  fetchListings()
-    .then((listings) => {
-      mainWindow.webContents.send('listings', listings); // Send the listings data to the renderer process
-    })
-    .catch((error) => {
-      console.error('Failed to fetch and process listings:', error);
-    });
 
-  fetchInterval = setInterval(() => {
-    fetchListings()
-      .then((listings) => {
-        mainWindow.webContents.send('listings', listings); // Send the listings data to the renderer process
-      })
-      .catch((error) => {
+async function startApp(interval) {
+  try {
+    const listings = await fetchListings();
+    console.log('Rendering listings...');
+    mainWindow.webContents.send('listings', listings); // Send the initial listings data to the renderer process
+    renderListings(listings); // Render the initial listings on the page
+
+    fetchInterval = setInterval(async () => {
+      try {
+        const listings = await fetchListings();
+        mainWindow.webContents.send('listings', listings); // Send the updated listings data to the renderer process
+        renderListings(listings); // Render the updated listings on the page
+      } catch (error) {
         console.error('Failed to fetch and process listings:', error);
-      });
-  }, interval);
+      }
+    }, interval);
+  } catch (error) {
+    console.error('Failed to fetch and process listings:', error);
+  }
 }
 
 function createWindow() {
@@ -132,14 +121,14 @@ function createWindow() {
       nodeIntegration: true,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js') // Path to the preload script
-    },
+    }
   });
 
   mainWindow.loadURL(
     url.format({
       pathname: path.join(__dirname, 'main.html'),
       protocol: 'file:',
-      slashes: true,
+      slashes: true
     })
   );
 
@@ -184,23 +173,21 @@ function createWindow() {
       link_photo TEXT
     )`);
 
-    fetchListings()
-      .then((listings) => {
-        mainWindow.webContents.send('listings', listings); // Send the initial listings data to the renderer process
-      })
-      .catch((error) => {
-        console.error('Failed to fetch and process listings:', error);
-      });
+    const interval = 3600000; // Fetch every hour
+    startApp(interval);
 
     setInterval(() => {
       fetchListings()
         .then((listings) => {
+          console.log('Rendering listings...');
           mainWindow.webContents.send('listings', listings); // Send the updated listings data to the renderer process
+          renderListings(listings); // Render the updated listings on the page
+          console.log('Listings rendered.');
         })
         .catch((error) => {
           console.error('Failed to fetch and process listings:', error);
         });
-    }, 3600000); // Fetch every hour
+    }, interval);
   });
 }
 
