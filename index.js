@@ -16,9 +16,17 @@ function renderListings(listings) {
 
 // Function to render the listings
 function renderListings(listings) {
-  const listingItems = listings.map(listing => listing.title);
+  const listingItems = listings.map(listing => ({
+    id: listing.id,
+    make: listing.make,
+    model: listing.model,
+    finish: listing.finish,
+    price: listing.price.amount,
+    title: listing.title
+  }));
   mainWindow.webContents.executeJavaScript(`renderListings(${JSON.stringify(listingItems)})`);
 }
+
 
 async function fetchListings() {
   console.log('Fetching listings...');

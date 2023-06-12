@@ -52,7 +52,47 @@ function renderChart(labels, data) {
 }
 
 // Function to render the listings
-function renderListings(listingItems) {
+function renderListings(listings) {
   const listingsContainer = document.getElementById('listings-container');
-  listingsContainer.innerHTML = listingItems.map(item => `<li>${item}</li>`).join('');
+  
+  // Clear the listings container
+  listingsContainer.innerHTML = '';
+
+  // Create the table element
+  const table = document.createElement('table');
+  table.classList.add('listings-table');
+
+  // Create the table header row
+  const headerRow = document.createElement('tr');
+  headerRow.innerHTML = `
+    <th>ID</th>
+    <th>Make</th>
+    <th>Model</th>
+    <th>Finish</th>
+    <th>Price</th>
+  `;
+
+  // Append the header row to the table
+  table.appendChild(headerRow);
+
+  // Iterate over the listings and create table rows
+  listings.forEach(listing => {
+    const { id, make, model, finish, price } = listing;
+
+    // Create a table row
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${id}</td>
+      <td>${make}</td>
+      <td>${model}</td>
+      <td>${finish}</td>
+      <td>${price}</td>
+    `;
+
+    // Append the row to the table
+    table.appendChild(row);
+  });
+
+  // Append the table to the listings container
+  listingsContainer.appendChild(table);
 }
