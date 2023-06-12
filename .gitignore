@@ -5,3 +5,4 @@ package-lock.json
 .vscode
 dist
 dist-app
+release-builds

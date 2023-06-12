@@ -146,7 +146,7 @@ function createWindow() {
     mainWindow = null;
   });
 
-  db = new sqlite3.Database('listings.db', (err) => {
+  db = new sqlite3.Database(path.resolve(__dirname, 'listings.db'), (err) => {
     if (err) {
       console.error('Failed to open database:', err);
       throw err;
