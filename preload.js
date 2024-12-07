@@ -1,12 +1,17 @@
-const { ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer } = require('electron');
 
-window.ipcRenderer = ipcRenderer;
-
-window.addEventListener('DOMContentLoaded', () => {
-  const messageContainer = document.getElementById('message-container');
-  ipcRenderer.on('message', (event, message) => {
-    const messageElement = document.createElement('p');
-    messageElement.textContent = message;
-    messageContainer.appendChild(messageElement);
-  });
+contextBridge.exposeInMainWorld('electronAPI', {
+  onUpdateChartData: (callback) => {
+    ipcRenderer.on('update-chart-data', (event, data) => callback(event, data));
+  },
+  onUpdateListings: (callback) => {
+    ipcRenderer.on('update-listings', (event, data) => callback(event, data));
+  },
+  onMessage: (callback) => {
+    ipcRenderer.on('message', (event, data) => callback(event, data));
+  },
+  onListings: (callback) => {
+    ipcRenderer.on('listings', (event, data) => callback(event, data));
+  },
+  fetchListings: () => ipcRenderer.send('fetch-listings')
 });

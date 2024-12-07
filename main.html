@@ -11,20 +11,49 @@
 
 <body>
   <h1>Listings App</h1>
+  <div id="debug-info" style="color: yellow; font-size: 12px;"></div>
   <label for="interval-select">Interval:</label>
   <select id="interval-select">
-    <option value="3600000">1 hour</option>
-    <option value="7200000">2 hours</option>
-    <option value="10800000">3 hours</option>
+    <!-- Options will be populated via JavaScript -->
   </select>
+  <div class="controls">
+    <label for="listings-per-page">Listings per page:</label>
+    <select id="listings-per-page">
+      <option value="50">50</option>
+      <option value="100">100</option>
+      <option value="200">200</option>
+      <option value="300">300</option>
+      <option value="500">500</option>
+      <option value="1000">1000</option>
+      <option value="all">All</option>
+    </select>
+    
+    <button id="refresh-listings">Refresh Listings</button>
+
+    <div class="search-filter">
+      <input type="text" id="search-input" placeholder="Search listings...">
+      <select id="filter-column">
+        <option value="all">All Columns</option>
+        <option value="make">Make</option>
+        <option value="model">Model</option>
+        <option value="finish">Finish</option>
+      </select>
+    </div>
+  </div>
   <div id="chart-container">
     <canvas id="price-chart"></canvas>
   </div>
+  <!-- <form id="listing-form">
+    <label for="select-listing-ids">Select Listing ID(s):</label>
+    <select id="select-listing-ids" multiple>
+      
+    </select>
+    <button type="submit">Update Chart</button>
+  </form> -->
   <div id="listings-container"></div>
   <div id="message-container"></div>
-  <ul></ul>
-  </div>
-  <script src="renderer.js"></script>
+
 </body>
+<script src="renderer.js"></script>
 
 </html>

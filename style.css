@@ -35,3 +35,78 @@ body {
     font-family: 'Press Start 2P', cursive;
     src: url();
   }
+
+  #select-listing-ids {
+    background-color: #333;
+    color: #fff;
+    width: 100%;
+    max-width: 500px;
+    min-height: 100px;
+    margin: 10px 0;
+    padding: 5px;
+  }
+
+  #select-listing-ids option {
+    padding: 5px;
+    margin: 2px 0;
+    background-color: #444;
+  }
+
+  #select-listing-ids option:checked {
+    background-color: #666;
+  }
+
+  .controls {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .search-filter {
+    display: flex;
+    gap: 10px;
+  }
+
+  #search-input {
+    padding: 5px;
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #666;
+  }
+
+  .listings-table th {
+    cursor: pointer;
+    position: relative;
+    padding-right: 20px;
+  }
+
+  .listings-table th::after {
+    content: '↕';
+    position: absolute;
+    right: 5px;
+    opacity: 0.5;
+  }
+
+  .listings-table th.sort-asc::after {
+    content: '↑';
+    opacity: 1;
+  }
+
+  .listings-table th.sort-desc::after {
+    content: '↓';
+    opacity: 1;
+  }
+
+  #refresh-listings {
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #666;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+
+  #refresh-listings:hover {
+    background-color: #555;
+  }
