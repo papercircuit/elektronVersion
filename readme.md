@@ -34,4 +34,20 @@ This app should be able to run on a mac and will need to be able to run in the b
 - This is a work in progress and is not yet functional
 - See `index.js` for the main logic
 - See `renderer.js` for the UI logic
-- See `preload.js` for the communication logic between the main and renderer processes
+- See `preload.js` for the communication logic between the main and renderer processes/
+
+## structure
+
+src/
+  ├── api/
+  │   ├── reverb.js
+  │   └── database.js
+  ├── services/
+  │   └── listingService.js
+  ├── main/
+  │   └── index.js
+  ├── renderer/
+  │   ├── renderer.js
+  │   └── chart.js
+  └── config/
+      └── config.js

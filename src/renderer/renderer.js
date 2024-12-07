@@ -49,6 +49,25 @@ function renderChart(labels, data) {
 }
 
 function renderListings(listings) {
+  console.log('renderListings called with', listings?.length, 'listings');
+  if (!listings || !Array.isArray(listings)) {
+    console.error('Invalid listings data received:', listings);
+    return;
+  }
+
+  const container = document.getElementById('listings-container');
+  if (!container) {
+    console.error('Listings container not found');
+    return;
+  }
+
+  // Clear existing content
+  container.innerHTML = '';
+  
+  // Create table
+  const table = document.createElement('table');
+  table.classList.add('listings-table');
+
   currentListings = listings;
   
   // Filter listings
@@ -88,13 +107,6 @@ function renderListings(listings) {
   if (listingsPerPage !== 'all') {
     filteredListings = filteredListings.slice(0, parseInt(listingsPerPage));
   }
-
-  // Clear the listings container
-  listingsContainer.innerHTML = '';
-
-  // Create the table
-  const table = document.createElement('table');
-  table.classList.add('listings-table');
 
   // Create header row with sorting
   const headerRow = document.createElement('tr');

@@ -198,13 +198,13 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, '../preload/preload.js')
     }
   });
 
   mainWindow.loadURL(
     url.format({
-      pathname: path.join(__dirname, 'main.html'),
+      pathname: path.join(__dirname, '../renderer/main.html'),
       protocol: 'file:',
       slashes: true
     })

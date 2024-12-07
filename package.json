@@ -2,7 +2,7 @@
     "name": "reverb_price_history",
     "version": "1.0.0",
     "description": "Electron app for fetching and processing listings",
-    "main": "index.js",
+     "main": "src/main/index.js",
     "scripts": {
         "start": "electron .",
         "build": "electron-packager . --overwrite --platform=darwin --arch=x64 --prune=true --out=release-builds",
